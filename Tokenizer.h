@@ -48,7 +48,7 @@ template<typename T> struct DynamicBufferSimple {
 
     T& Back() {
         ASSERT(mem != nullptr && size != 0);
-        return mem[size-1];
+        return mem[size];
     }
 
     u32 PushBack(T e) {
@@ -141,7 +141,7 @@ template<typename K , typename V> struct HashTable {
         array[1].key = (~u32(0));
     }
 
-    u32 Find(K key) {
+    u32 Find(u32 key) {
     
         u32 hash = key & (cap - 1);
         u32 ogHash = hash;
@@ -157,12 +157,11 @@ template<typename K , typename V> struct HashTable {
         }
     }
 
-    void Delete(K key) {
-        occupancy--;
+    void Delete(u32 key) {
         array[Find(key)].key = (~u32(0));
     }
 
-    void Insert(u32 key , V val) {
+    void Insert(u32 key , u32 val) {
 
         if( cap * loadFactor < (occupancy + 1) ) {
 
@@ -226,12 +225,7 @@ template<typename K , typename V> struct HashTable {
 
 enum TokenType {
     TOKEN_IDENTIFIER,
-    TOKEN_KEYWORD_PRINT,
-    TOKEN_KEYWORD_VAR,
-    TOKEN_KEYWORD_IF,
-    TOKEN_KEYWORD_ELSE,
-    TOKEN_KEYWORD_FOR,
-    TOKEN_KEYWORD_FN,
+    TOKEN_KEYWORD,
 
     TOKEN_OPEN_PAREN,
     TOKEN_CLOSE_PAREN,
@@ -240,43 +234,21 @@ enum TokenType {
     TOKEN_OPEN_BRACES,
     TOKEN_CLOSE_BRACES,
 
-    TOKEN_PLUS_EQUALS,
-    TOKEN_MINUS_EQUALS,
-    TOKEN_ASTERISTK_EQUALS,
-    TOKEN_SLASH_EQUALS,
-    TOKEN_AMPERSAND_EQUALS,
-    TOKEN_VERTICAL_BAR_EQUALS,
-    TOKEN_CIRCUMFLEX_EQUALS,
-    TOKEN_LSHIFT_EQUALS,
-    TOKEN_RSHIFT_EQUALS,
-    TOKEN_EXCLAMATION_EQUALS,
-    TOKEN_TILDE_EQUALS,
+    TOKEN_ADD,
+    TOKEN_SUB,
+    TOKEN_DIV,
+    TOKEN_ASSIGNMENT,
 
-    TOKEN_AMPERSAND_AMPERSAND,
-    TOKEN_VERTICAL_BAR_VERTICAL_BAR,
-    TOKEN_EQUALS_EQUALS, 
-
-    TOKEN_VERTICAL_BAR,
-    TOKEN_CIRCUMFLEX,
-    TOKEN_DOT,
-    TOKEN_COMMA,
+    TOKEN_COMA,
     TOKEN_COLON,
     TOKEN_SEMICOLON,
     TOKEN_ASTERISK,
-    TOKEN_SLASH,
     TOKEN_AMPERSAND,
-    TOKEN_TILDE,
+    TOKEN_NEGATION,
     TOKEN_EXLAMATION_MARK,
-    TOKEN_PLUS,
-    TOKEN_MINUS,
-    TOKEN_EQUAL_SIGN,
-    TOKEN_LSHIFT,
-    TOKEN_RSHIFT,
 
     TOKEN_STRING_LITERAL,
     TOKEN_NUMBER_LITERAL,
-    TOKEN_BOOL_LITERAL,
-    TOKEN_NULL_LITERAL,
 
     TOKEN_UNKNOWN,
     TOKEN_EOF,
@@ -294,64 +266,6 @@ struct Tokenizer {
     char*   at;
     u32     line;
 };
-
-const char* PrintTokenType(TokenType t) {
-    switch (t) {
-        case TOKEN_KEYWORD_PRINT:                   std::cout << "TOKEN_KEYWORD_PRINT";                break;
-        case TOKEN_KEYWORD_VAR:                     std::cout << "TOKEN_KEYWORD_VAR";                  break;
-        case TOKEN_KEYWORD_IF:                      std::cout << "TOKEN_KEYWORD_VAR";                  break;
-        case TOKEN_KEYWORD_ELSE:                    std::cout << "TOKEN_KEYWORD_VAR";                  break;
-        case TOKEN_KEYWORD_FN:                      std::cout << "TOKEN_KEYWORD_FN";                   break;
-        case TOKEN_IDENTIFIER:                      std::cout << "TOKEN_IDENTIFIER";                   break;
-        case TOKEN_OPEN_PAREN:                      std::cout << "TOKEN_OPEN_PAREN";                   break;
-        case TOKEN_CLOSE_PAREN:                     std::cout << "TOKEN_CLOSE_PAREN";                  break;
-        case TOKEN_OPEN_BRACKET:                    std::cout << "TOKEN_OPEN_BRACKET";                 break;
-        case TOKEN_CLOSE_BRACKET:                   std::cout << "TOKEN_CLOSE_BRACKET";                break;
-        case TOKEN_OPEN_BRACES:                     std::cout << "TOKEN_OPEN_BRACES";                  break;
-        case TOKEN_CLOSE_BRACES:                    std::cout << "TOKEN_CLOSE_BRACES";                 break;
-        case TOKEN_PLUS_EQUALS:                     std::cout << "TOKEN_PLUS_EQUALS";                  break;
-        case TOKEN_MINUS_EQUALS:                    std::cout << "TOKEN_MINUS_EQUALS";                 break;
-        case TOKEN_ASTERISTK_EQUALS:                std::cout << "TOKEN_ASTERISTK_EQUALS";             break;
-        case TOKEN_SLASH_EQUALS:                    std::cout << "TOKEN_SLASH_EQUALS";                 break;
-        case TOKEN_AMPERSAND_EQUALS:                std::cout << "TOKEN_AMPERSAND_EQUALS";             break;
-        case TOKEN_VERTICAL_BAR_EQUALS:             std::cout << "TOKEN_VERTICAL_BAR_EQUALS";          break;
-        case TOKEN_CIRCUMFLEX_EQUALS:               std::cout << "TOKEN_CIRCUMFLEX_EQUALS";            break;
-        case TOKEN_LSHIFT_EQUALS:                   std::cout << "TOKEN_LSHIFT_EQUALS";                break;
-        case TOKEN_RSHIFT_EQUALS:                   std::cout << "TOKEN_RSHIFT_EQUALS";                break;
-        case TOKEN_EXCLAMATION_EQUALS:              std::cout << "TOKEN_EXCLAMATION_EQUALS";           break;
-        case TOKEN_TILDE_EQUALS:                    std::cout << "TOKEN_TILDE_EQUALS";                 break;
-        case TOKEN_CIRCUMFLEX:                      std::cout << "TOKEN_CIRCUMFLEX";                   break;
-        case TOKEN_DOT:                             std::cout << "TOKEN_DOT";                          break;
-        case TOKEN_COMMA:                           std::cout << "TOKEN_COMA";                         break;
-        case TOKEN_COLON:                           std::cout << "TOKEN_COLON";                        break;
-        case TOKEN_SEMICOLON:                       std::cout << "TOKEN_SEMICOLON";                    break;
-        case TOKEN_ASTERISK:                        std::cout << "TOKEN_ASTERISK";                     break;
-        case TOKEN_AMPERSAND:                       std::cout << "TOKEN_AMPERSAND";                    break;
-        case TOKEN_TILDE:                           std::cout << "TOKEN_TILDE";                        break;
-        case TOKEN_EXLAMATION_MARK:                 std::cout << "TOKEN_EXLAMATION_MARK";              break;
-        case TOKEN_PLUS:                            std::cout << "TOKEN_PLUS";                         break;
-        case TOKEN_MINUS:                           std::cout << "TOKEN_MINUS";                        break;
-        case TOKEN_SLASH:                           std::cout << "TOKEN_SLASH";                        break;
-        case TOKEN_EQUAL_SIGN:                      std::cout << "TOKEN_EQUAL_SIGN";                   break;
-        case TOKEN_LSHIFT:                          std::cout << "TOKEN_LSHIFT";                       break;
-        case TOKEN_RSHIFT:                          std::cout << "TOKEN_RSHIFT";                       break;
-        case TOKEN_STRING_LITERAL:                  std::cout << "TOKEN_STRING_LITERAL";               break;
-        case TOKEN_NUMBER_LITERAL:                  std::cout << "TOKEN_NUMBER_LITERAL";               break;
-        case TOKEN_UNKNOWN:                         std::cout << "TOKEN_UNKNOWN";                      break;
-        case TOKEN_EOF:                             std::cout << "TOKEN_EOF";                          break;
-        case TOKEN_AMPERSAND_AMPERSAND:             std::cout << "TOKEN_AMPERSAND_AMPERSAND,";         break;
-        case TOKEN_VERTICAL_BAR_VERTICAL_BAR:       std::cout << "TOKEN_VERTICAL_BAR_VERTICAL_BAR,";   break;
-        case TOKEN_EQUALS_EQUALS:                   std::cout << "TOKEN_EQUALS_EQUALS,";               break;
-        case TOKEN_BOOL_LITERAL:                    std::cout << "TOKEN_BOOL_LITERAL,";                break;
-        case TOKEN_NULL_LITERAL:                    std::cout << "TOKEN_NULL_LITERAL,";                break;
-        default:
-            break;
-    }
-}
-void PrintToken(Token t) {
-    std::cout.write(t.text , t.lenght) << " ";
-    //PrintTokenType(t.type);
-}
 
 i64 GetI64(Token t) {
     char str[t.lenght+1]{0};
@@ -383,9 +297,9 @@ bool IsWhiteSpace(char c) {
             (c == '\r');
 }
 
-u32 GetLineNumber(char* source ,char* at) {
+u32 GetLineNumber(char* source ,Tokenizer* tokenizer) {
     u32 c = 1;
-    while( source != at ) {
+    while( source != tokenizer->at ) {
         if( *source == '\n' ) c++;
         source++;
     }
@@ -441,7 +355,7 @@ void EatMacors(Tokenizer* tokenizer) {
     }
 }
 
-void EatWhiteSpace(Tokenizer* tokenizer) {
+void EatWhiteSpace(Tokenizer* tokenizer) { // returns number lines eaten
 
     while(tokenizer->at[0]) {
         if( IsWhiteSpace(tokenizer->at[0])  ) {
@@ -452,7 +366,7 @@ void EatWhiteSpace(Tokenizer* tokenizer) {
             tokenizer->at += 2;
             while( tokenizer->at[0] && !(tokenizer->at[0] == '\n' )) ++tokenizer->at;
             tokenizer->line++;
-            tokenizer->at += 1;
+            tokenizer->at += 2;
         }
         else if( tokenizer->at[0] == '/' && tokenizer->at[1] == '*' ) {
             tokenizer->at += 2;
@@ -488,128 +402,19 @@ Token GetToken(Tokenizer* tokenizer) {
         case ']'    :token.type = TOKEN_CLOSE_BRACKET;      break;
         case '{'    :token.type = TOKEN_OPEN_BRACES;        break;
         case '}'    :token.type = TOKEN_CLOSE_BRACES;       break;
-        case ','    :token.type = TOKEN_COMMA;              break;
+        case ','    :token.type = TOKEN_COMA;               break;
         case ':'    :token.type = TOKEN_COLON;              break;
         case ';'    :token.type = TOKEN_SEMICOLON;          break;
-        case '='    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_EQUALS_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_EQUAL_SIGN;
-                    }
-                    break;
-        case '*'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_ASTERISTK_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_ASTERISK;
-                    }
-                    break;
-        case '&'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_AMPERSAND_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else if(tokenizer->at[0] == '&') {
-                        token.type = TOKEN_AMPERSAND_AMPERSAND;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_AMPERSAND;
-                    }
-                    break;
-        case '!'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_EXCLAMATION_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_EXLAMATION_MARK;
-                    }
-                    break;
-        case '+'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_PLUS_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_PLUS;
-                    }
-                    break;
-        case '~'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_TILDE_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_TILDE;
-                    }
-                    break;
-        case '-'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_MINUS_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_MINUS;
-                    }
-                    break;
-        case '/'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_SLASH_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_SLASH;
-                    }
-                    break;
-        case '>'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_RSHIFT_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_RSHIFT;
-                    }
-                    break;
-        case '<'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_LSHIFT_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_LSHIFT;
-                    }
-                    break;
-        case '|'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_VERTICAL_BAR_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else if(tokenizer->at[0] == '|') {
-                        token.type = TOKEN_VERTICAL_BAR_VERTICAL_BAR;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_VERTICAL_BAR;
-                    }
-                    break;
-        case '^'    :if(tokenizer->at[0] == '=') {
-                        token.type = TOKEN_CIRCUMFLEX_EQUALS;
-                        token.lenght++;
-                        tokenizer->at++;
-                    }
-                    else {
-                        token.type = TOKEN_CIRCUMFLEX;
-                    }
-                    break;
-                    
+        case '*'    :token.type = TOKEN_ASTERISK;           break;
+        case '&'    :token.type = TOKEN_AMPERSAND;          break;
+        case '!'    :token.type = TOKEN_EXLAMATION_MARK;    break;
+        case '~'    :token.type = TOKEN_NEGATION;           break;
+
+        case '+'     :token.type = TOKEN_ADD;               break;
+        case '-'     :token.type = TOKEN_SUB;               break;
+        case '/'     :token.type = TOKEN_DIV;               break;
+        case '='     :token.type = TOKEN_ASSIGNMENT;        break;
+
         case '"'    :
             {
                 token.text = tokenizer->at;
@@ -628,7 +433,6 @@ Token GetToken(Tokenizer* tokenizer) {
             }
 
         case '.':
-            if(!IsNumeric(tokenizer->at[0])) {token.type = TOKEN_DOT; break;}
         case '0':
         case '1':
         case '2':
@@ -668,33 +472,6 @@ Token GetToken(Tokenizer* tokenizer) {
                 while( IsAlpha(tokenizer->at[0]) || IsNumeric(tokenizer->at[0]) || tokenizer->at[0] == '_' ) tokenizer->at++;
 
                 token.lenght = tokenizer->at - token.text;
-
-                if( TokenEquals(token , "true") || TokenEquals(token , "false")) {
-                    token.type = TOKEN_BOOL_LITERAL;
-                }
-                else if( TokenEquals(token , "null") ) {
-                    token.type = TOKEN_NULL_LITERAL;
-                }
-                else if(TokenEquals(token , "print")) {
-                    token.type = TOKEN_KEYWORD_PRINT;
-                }
-                else if(TokenEquals(token , "var")) {
-                    token.type = TOKEN_KEYWORD_VAR;
-                }
-                else if(TokenEquals(token , "if")) {
-                    token.type = TOKEN_KEYWORD_IF;
-                }
-                else if(TokenEquals(token , "else")) {
-                    token.type = TOKEN_KEYWORD_ELSE;
-                }
-                else if(TokenEquals(token , "for")) {
-                    token.type = TOKEN_KEYWORD_FOR;
-                }
-                else if(TokenEquals(token , "fn")) {
-                    token.type = TOKEN_KEYWORD_FN;
-                }
-            
-
             }
             else {
                 token.type = TOKEN_UNKNOWN;
